@@ -57,11 +57,10 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # 그림파일들을 쌓아두고 호출을 기다림
 
 
-@app.route('/')
+@app.route('/')#사용자가 보기위함.
 def index():
-    global is_record
-    return render_template('index4#6.html', is_record=is_record)  # index4#6.html의 형식대로 웹페이지를 보여줌
-
+    return "<html><body><img src='/video_feed' /></body></html>"
+#http://<라즈베리파이의 IP 주소>:5000로 접속하면 카메라를 볼 수 있음.
 
 @app.route('/video_feed')
 def video_feed():
@@ -83,6 +82,6 @@ def push_capture():  # 캡쳐버튼을 눌렀을때 실행되는 함수
 
 
 if __name__ == "__main__":  # 웹사이트를 호스팅하여 접속자에게 보여주기 위한 부분
-    app.run(host=ip, port="8080")
+    app.run(host=ip, port=5000)
     # host는 현재 라즈베리파이의 내부 IP, port는 임의로 설정
     # 해당 내부 IP와 port를 포트포워딩 해두면 외부에서도 접속가능
