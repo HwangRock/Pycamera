@@ -11,7 +11,6 @@ capture = cv2.VideoCapture(-1)  # 카메라 영상을 불러와 capture class에
 fourcc = cv2.VideoWriter_fourcc(*'XVID')  # 녹화파일을 저장할 코덱 설정
 capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-font = ImageFont.truetype('fonts/SCDream6.otf', 20)
 is_record = False
 is_capture = False
 start_record = False  # 각 변수들은 처음엔 거짓(버튼을 누르지 않음)
@@ -20,17 +19,12 @@ start_record = False  # 각 변수들은 처음엔 거짓(버튼을 누르지 �
 def gen_frames():
     global is_record, start_record, is_capture, video, video_name  # capture와 push_btn, is_capture, video를 전역변수로 지정(위의 전역변수를 가져옴)
     while True:  # 무한루프
-        now = datetime.datetime.now()  # 현재시각 받아옴
-        nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')  # 현재시각을 문자열 형태로 저장
-        nowDatetime_path = now.strftime('%Y-%m-%d %H_%M_%S')
         ref, frame = capture.read()  # 현재 영상을 받아옴
         if not ref:  # 영상이 잘 받아지지 않았으면(ref가 거짓)
             break  # 무한루프 종료
         else:
             frame = Image.fromarray(frame)
             draw = ImageDraw.Draw(frame)
-            # xy는 텍스트 시작위치, text는 출력할 문자열, font는 글꼴, fill은 글자색(파랑,초록,빨강)
-            draw.text(xy=(10, 15), text="제목" + nowDatetime, font=font, fill=(255, 255, 255))
             frame = np.array(frame)
             ref, buffer = cv2.imencode('.jpg', frame)
             frame1 = frame  # 현재화면을 frame1에 복사해둠
@@ -38,17 +32,22 @@ def gen_frames():
             if start_record == True and is_record == False:  # 현재 녹화상태가 아니며 start_record가 참이면(녹화버튼 누름)
                 is_record = True  # 녹화상태로 만들어줌
                 start_record = False  # start_record는 거짓으로
+                
                 # 비디오 객체에 (파일이름(한글가능), 인코더, 초당프레임률(정확하지 않음), 영상크기) 로 영상을 쓸 준비
-                video_name = "my_exstorage/cctv_data/녹화 " + nowDatetime_path + ".avi"
+                
+                video_name = "my_exstorage/cctv_data/녹화 " + nowDatetime_path + ".avi" #저장할 경로. 수정할필요있음.
                 video = cv2.VideoWriter(video_name, fourcc, 15, (frame1.shape[1], frame1.shape[0]))
+                
             elif start_record and is_record == True:  # 녹화중인 상태에서 다시 녹화버튼을 누르면
                 is_record = False  # 녹화상태를 꺼줌
                 start_record = False
                 video.release()  # 녹화 종료
+                
             elif is_capture:  # 캡쳐버튼을 누르면
                 # (파일이름(한글불가, 영어만), 이미지)로 영상을 캡쳐하여 그림파일로 저장
                 is_capture = False
-                cv2.imwrite("my_exstorage/cctv_data/capture " + nowDatetime_path + ".png", frame1)  # 파일이름(한글안됨), 이미지
+                cv2.imwrite("my_exstorage/cctv_data/capture " + nowDatetime_path + ".png", frame1)  #캡처를 저장할 경로
+                
             if is_record == True:  # 현재 녹화상태이면
                 # 비디오 객체에 현재 프레임 저장
                 video.write(frame1)
