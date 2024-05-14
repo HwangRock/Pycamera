@@ -29,7 +29,7 @@ def download_video():
 
 @app.route('/video_feed')#카메라의 크기.
 def video_feed():
-   return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+   return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
    app.run(host=ip, port=5000)
